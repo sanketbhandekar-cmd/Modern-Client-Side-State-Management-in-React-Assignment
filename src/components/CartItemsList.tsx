@@ -1,11 +1,10 @@
-import type { CartItem } from '../types';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { cartItemsAtom, removeItemAtom } from '../cartAtoms';
 
-interface CartItemsListProps {
-  items?: CartItem[];
-  onRemove?: (id: string) => void;
-}
+export function CartItemsList() {
+  const items = useAtomValue(cartItemsAtom);
+  const removeItem = useSetAtom(removeItemAtom);
 
-export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
   if (items.length === 0) {
     return <div className="cart-empty-message">Your cart is empty.</div>;
   }
@@ -23,7 +22,7 @@ export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
           <button
             type="button"
             className="btn-remove"
-            onClick={() => onRemove?.(item.id)}
+            onClick={() => removeItem(item.id)}
             aria-label={`Remove ${item.name}`}
           >
             Remove
@@ -33,4 +32,3 @@ export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
     </ul>
   );
 }
-

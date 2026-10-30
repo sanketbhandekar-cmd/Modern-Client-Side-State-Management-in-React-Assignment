@@ -1,28 +1,54 @@
+import { useEffect, useState } from 'react';
 import type { Product } from '../types';
 import { ProductCard } from './ProductCard';
 
-interface CatalogProps {
-  products?: Product[];
-  onAdd?: (product: Product) => void;
-  loading?: boolean;
-}
+export function Catalog() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-export function Catalog({ products = [], onAdd, loading = false }: CatalogProps) {
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch('/api/products', { signal: controller.signal });
+        if (!res.ok) {
+          throw new Error(`Failed to fetch catalog: ${res.statusText}`);
+        }
+        const data: Product[] = await res.json();
+        setProducts(data);
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') return;
+        setError(err instanceof Error ? err.message : 'Error fetching catalog');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+
+    return () => controller.abort();
+  }, []);
+
   return (
     <section className="catalog-section">
       <h2 className="section-title">Products Catalog</h2>
       {loading ? (
-        <div className="catalog-loading">Loading products...</div>
+        <div className="catalog-loading">Loading products from catalog...</div>
+      ) : error ? (
+        <div className="catalog-error">{error}</div>
       ) : products.length === 0 ? (
-        <div className="catalog-empty">No products available.</div>
+        <div className="catalog-empty">No products available in catalog.</div>
       ) : (
         <div className="product-grid">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} onAdd={onAdd} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
     </section>
   );
 }
-
