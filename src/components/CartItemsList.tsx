@@ -1,11 +1,9 @@
-import type { CartItem } from '../types';
+import { useCartState, useCartDispatch } from '../context/CartContext';
 
-interface CartItemsListProps {
-  items?: CartItem[];
-  onRemove?: (id: string) => void;
-}
+export function CartItemsList() {
+  const { items } = useCartState();
+  const dispatch = useCartDispatch();
 
-export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
   if (items.length === 0) {
     return <div className="cart-empty-message">Your cart is empty.</div>;
   }
@@ -23,7 +21,7 @@ export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
           <button
             type="button"
             className="btn-remove"
-            onClick={() => onRemove?.(item.id)}
+            onClick={() => dispatch({ type: 'removed', id: item.id })}
             aria-label={`Remove ${item.name}`}
           >
             Remove
@@ -33,4 +31,3 @@ export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
     </ul>
   );
 }
-

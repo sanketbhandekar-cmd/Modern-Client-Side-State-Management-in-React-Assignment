@@ -6,20 +6,17 @@ This project demonstrates and compares three client-side state management paradi
 
 ---
 
-## Branching Tree Architecture
+## Deliverable 1: Context + useReducer
 
-The repository is structured into four dependent branches according to the assignment specification:
-
-```text
-master (React + Vite Boilerplate, Types, db.json, Proxy Config, UI Shell)
-├── deliverable-1-context (PR1 → base branch: master)
-│
-├── deliverable-2-zustand (PR2 → base branch: master)
-│   │
-│   └── deliverable-4-xstate (PR4 → base branch: deliverable-2-zustand)
-│
-└── deliverable-3-jotai (PR3 → base branch: master)
-```
+- **Cart State with `useReducer`**: Implemented a pure reducer (`cartReducer`) to handle `added`, `removed`, and `cleared` cart actions.
+- **Split Contexts**: Separated `CartStateContext` (state) from `CartDispatchContext` (dispatch). Components that only dispatch actions (like `ProductCard`) do not re-render when cart items change.
+- **Custom Hooks**: Created `useCartState()` and `useCartDispatch()` with runtime checks that throw an error if called outside `<CartProvider>`.
+- **Catalog Fetch**: Updated `Catalog` to fetch products from `GET /api/products` on mount, including loading, error, and empty states.
+- **Component Updates**:
+  - `CartBadge`: Reads item count directly from `useCartState()`.
+  - `ProductCard`: Uses `useCartDispatch()` to add items and is wrapped in `React.memo` to avoid re-renders.
+  - `CartItemsList`: Displays cart items, quantities, subtotal, and remove buttons using `useCartDispatch()`.
+  - `CartDrawer`: Shows the cart list, calculates the total price, and includes a checkout button.
 
 ---
 

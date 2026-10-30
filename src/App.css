@@ -172,6 +172,16 @@
   border-radius: var(--radius-sm);
 }
 
+.catalog-error {
+  color: var(--danger-color);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
+
 .cart-items-list {
   list-style: none;
   display: flex;
