@@ -6,20 +6,16 @@ This project demonstrates and compares three client-side state management paradi
 
 ---
 
-## Branching Tree Architecture
+## Deliverable 2: Zustand Store
 
-The repository is structured into four dependent branches according to the assignment specification:
-
-```text
-master (React + Vite Boilerplate, Types, db.json, Proxy Config, UI Shell)
-├── deliverable-1-context (PR1 → base branch: master)
-│
-├── deliverable-2-zustand (PR2 → base branch: master)
-│   │
-│   └── deliverable-4-xstate (PR4 → base branch: deliverable-2-zustand)
-│
-└── deliverable-3-jotai (PR3 → base branch: master)
-```
+- **Cart Store (`useCartStore`)**: Created a Zustand store in `src/cartStore.ts` managing `items`, `status` (`'idle' | 'submitting' | 'success' | 'error'`), and actions (`addItem`, `removeItem`, `checkout`, `clear`).
+- **Derived Total**: Computed total price as a derived selector (`s.items.reduce(...)`) so derived state is not duplicated in the store.
+- **Async Checkout Action**: Added an asynchronous `checkout()` action that reads cart items with `get()`, sends them to `POST /api/orders`, and updates status on completion or failure.
+- **Selective Subscriptions**:
+  - `CartBadge`: Subscribes only to total item count.
+  - `ProductCard`: Subscribes strictly to `addItem` action and is wrapped in `React.memo` so it never re-renders when cart items change.
+- **Multiple Values with `useShallow`**: Used `useShallow` in `CartDrawer` and `CartItemsList` when reading multiple values from the store to prevent extra renders.
+- **Catalog Fetch**: Updated `Catalog` to fetch products from `GET /api/products` on mount with loading and error states.
 
 ---
 
