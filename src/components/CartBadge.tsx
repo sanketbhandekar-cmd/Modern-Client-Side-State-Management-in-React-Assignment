@@ -1,8 +1,9 @@
-interface CartBadgeProps {
-  count?: number;
-}
+import { useCartState } from '../context/CartContext';
 
-export function CartBadge({ count = 0 }: CartBadgeProps) {
+export function CartBadge() {
+  const { items } = useCartState();
+  const count = items.reduce((sum, item) => sum + item.qty, 0);
+
   return (
     <div className="cart-badge" aria-label={`Shopping cart with ${count} items`}>
       <span className="badge-icon">🛍️</span>
@@ -11,4 +12,3 @@ export function CartBadge({ count = 0 }: CartBadgeProps) {
     </div>
   );
 }
-
