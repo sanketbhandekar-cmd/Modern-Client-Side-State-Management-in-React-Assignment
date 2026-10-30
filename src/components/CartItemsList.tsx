@@ -1,11 +1,15 @@
-import type { CartItem } from '../types';
+import { useShallow } from 'zustand/react/shallow';
+import { useCartStore } from '../cartStore';
 
-interface CartItemsListProps {
-  items?: CartItem[];
-  onRemove?: (id: string) => void;
-}
+/**
+ * Uses useShallow so selecting both `items` and `removeItem`
+ * compares shallowly and avoids re-rendering on unrelated store updates.
+ */
+export function CartItemsList() {
+  const { items, removeItem } = useCartStore(
+    useShallow((s) => ({ items: s.items, removeItem: s.removeItem })),
+  );
 
-export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
   if (items.length === 0) {
     return <div className="cart-empty-message">Your cart is empty.</div>;
   }
@@ -23,7 +27,7 @@ export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
           <button
             type="button"
             className="btn-remove"
-            onClick={() => onRemove?.(item.id)}
+            onClick={() => removeItem(item.id)}
             aria-label={`Remove ${item.name}`}
           >
             Remove
@@ -33,4 +37,3 @@ export function CartItemsList({ items = [], onRemove }: CartItemsListProps) {
     </ul>
   );
 }
-
