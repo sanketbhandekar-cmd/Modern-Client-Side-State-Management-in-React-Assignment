@@ -6,20 +6,17 @@ This project demonstrates and compares three client-side state management paradi
 
 ---
 
-## Branching Tree Architecture
+## Deliverable 3: Jotai
 
-The repository is structured into four dependent branches according to the assignment specification:
-
-```text
-master (React + Vite Boilerplate, Types, db.json, Proxy Config, UI Shell)
-├── deliverable-1-context (PR1 → base branch: master)
-│
-├── deliverable-2-zustand (PR2 → base branch: master)
-│   │
-│   └── deliverable-4-xstate (PR4 → base branch: deliverable-2-zustand)
-│
-└── deliverable-3-jotai (PR3 → base branch: master)
-```
+- **Cart as Atoms**: Defined a primitive atom (`cartItemsAtom`) in `src/cartAtoms.ts` to hold the cart array outside of React components.
+- **Derived Read-Only Atoms**: Created `cartCountAtom` and `cartTotalAtom` to compute total items and price dynamically without duplicating state or using `useMemo`.
+- **Action Atoms**: Created write-only action atoms (`addItemAtom`, `removeItemAtom`, and `clearCartAtom`) using `atom(null, (get, set, ...))` to encapsulate state updates.
+- **Fine-Grained Subscriptions with Hooks**:
+  - `CartBadge`: Uses `useAtomValue(cartCountAtom)` to only read and re-render on count changes.
+  - `ProductCard`: Uses `useSetAtom(addItemAtom)` so it never subscribes to cart state changes and avoids re-rendering.
+  - `CartItemsList`: Uses `useAtomValue(cartItemsAtom)` for item list and `useSetAtom(removeItemAtom)` for removal.
+  - `CartDrawer`: Uses `useAtomValue(cartTotalAtom)` and `useAtomValue(cartCountAtom)` to show total and conditionally render checkout and clear buttons.
+- **Catalog Fetch**: Updated `Catalog` to fetch products from `GET /api/products` on mount with loading and error states.
 
 ---
 

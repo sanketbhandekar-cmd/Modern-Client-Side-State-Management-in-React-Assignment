@@ -1,11 +1,19 @@
+import React from 'react';
 import type { Product } from '../types';
+import { useSetAtom } from 'jotai';
+import { addItemAtom } from '../cartAtoms';
 
 interface ProductCardProps {
   product: Product;
-  onAdd?: (product: Product) => void;
 }
 
-export function ProductCard({ product, onAdd }: ProductCardProps) {
+/**
+ * ProductCard uses useSetAtom(addItemAtom) so it does not subscribe
+ * to cart state. It will never re-render when items in the cart change.
+ */
+export const ProductCard = React.memo(function ProductCard({ product }: ProductCardProps) {
+  const addItem = useSetAtom(addItemAtom);
+
   return (
     <div className="product-card">
       <div className="product-info">
@@ -15,11 +23,10 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
       <button
         type="button"
         className="btn-add"
-        onClick={() => onAdd?.(product)}
+        onClick={() => addItem(product)}
       >
         Add to Cart
       </button>
     </div>
   );
-}
-
+});

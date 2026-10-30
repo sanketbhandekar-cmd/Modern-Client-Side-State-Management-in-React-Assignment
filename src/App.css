@@ -259,3 +259,33 @@
 .btn-checkout:hover {
   opacity: 0.9;
 }
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-clear {
+  background: transparent;
+  border: none;
+  color: var(--danger-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.btn-clear:hover {
+  color: var(--danger-hover);
+}
+
+.catalog-error {
+  color: var(--danger-color);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+}
