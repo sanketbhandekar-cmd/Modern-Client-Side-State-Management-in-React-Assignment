@@ -1,46 +1,35 @@
-import type { ReactNode } from 'react';
-import type { CartItem } from '../types';
+import { useCartStore } from '../cartStore';
 import { CartItemsList } from './CartItemsList';
+import { CartErrorBanner } from './CartErrorBanner';
+import { CheckoutButton } from './CheckoutButton';
 
-interface CartDrawerProps {
-  items?: CartItem[];
-  onRemove?: (id: string) => void;
-  onCheckout?: () => void;
-  children?: ReactNode;
-}
-
-export function CartDrawer({
-  items = [],
-  onRemove,
-  onCheckout,
-  children,
-}: CartDrawerProps) {
-  const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+/**
+ * Decomposed CartDrawer housing CartItemsList, CartErrorBanner, and CheckoutButton.
+ * The drawer container does not re-render on checkout state transitions because
+ * each leaf sub-component subscribes to its own specific slice.
+ */
+export function CartDrawer() {
+  const total = useCartStore((s) =>
+    s.items.reduce((sum, item) => sum + item.price * item.qty, 0),
+  );
+  const hasItems = useCartStore((s) => s.items.length > 0);
 
   return (
     <aside className="cart-drawer">
       <h2 className="drawer-title">Shopping Cart</h2>
-      {children ?? (
-        <>
-          <CartItemsList items={items} onRemove={onRemove} />
-          {items.length > 0 && (
-            <div className="cart-summary">
-              <div className="cart-total">
-                <span>Total:</span>
-                <span className="cart-total-amount">${total.toFixed(2)}</span>
-              </div>
-              <button
-                type="button"
-                className="btn-checkout"
-                onClick={onCheckout}
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          )}
-        </>
+
+      <CartErrorBanner />
+      <CartItemsList />
+
+      {hasItems && (
+        <div className="cart-summary">
+          <div className="cart-total">
+            <span>Total:</span>
+            <span className="cart-total-amount">${total.toFixed(2)}</span>
+          </div>
+          <CheckoutButton />
+        </div>
       )}
     </aside>
   );
 }
-

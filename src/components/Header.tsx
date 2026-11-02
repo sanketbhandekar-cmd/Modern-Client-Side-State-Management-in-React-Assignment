@@ -3,15 +3,13 @@ import { Toolbar } from './Toolbar';
 import { CartBadge } from './CartBadge';
 
 interface HeaderProps {
-  count?: number;
   children?: ReactNode;
 }
 
-export function Header({ count = 0, children }: HeaderProps) {
+export function Header({ children }: HeaderProps) {
   return (
     <header className="header">
-      <Toolbar>{children ?? <CartBadge count={count} />}</Toolbar>
+      <Toolbar>{children ?? <CartBadge />}</Toolbar>
     </header>
   );
 }
-

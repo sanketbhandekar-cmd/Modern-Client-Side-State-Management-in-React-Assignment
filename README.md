@@ -6,20 +6,19 @@ This project demonstrates and compares three client-side state management paradi
 
 ---
 
-## Branching Tree Architecture
+## Deliverable 4: XState v5 Checkout Machine & Zustand Sync
 
-The repository is structured into four dependent branches according to the assignment specification:
-
-```text
-master (React + Vite Boilerplate, Types, db.json, Proxy Config, UI Shell)
-├── deliverable-1-context (PR1 → base branch: master)
-│
-├── deliverable-2-zustand (PR2 → base branch: master)
-│   │
-│   └── deliverable-4-xstate (PR4 → base branch: deliverable-2-zustand)
-│
-└── deliverable-3-jotai (PR3 → base branch: master)
-```
+- **Checkout State Machine (`checkoutMachine.ts`)**: Built a finite state machine using XState v5 with qualitative states (`review`, `submitting`, `success`), guards (`hasItems`), and context (`items`, `errorMessage`, `orderResult`).
+- **Async Payment Actor & Cancellation**: Used `fromPromise` to send orders to `POST /api/orders`. Passed the native `AbortSignal` to `fetch` so clicking "Cancel" mid-flight aborts the HTTP request in the Network tab and returns to `review`.
+- **Shared Checkout Context (`CheckoutContext.tsx`)**: Created an actor context with `createActorContext` so sibling components share a single running checkout actor.
+- **Headless Synchronization Bridges**:
+  - `CartSynchronizer`: Syncs cart items from Zustand to the running machine via `SYNC_ITEMS` events.
+  - `OrderCompletionBridge`: Listens for the emitted `orderSuccess` event from the machine and clears the Zustand store.
+- **Decomposed CartDrawer Components**:
+  - `CartErrorBanner`: Subscribes specifically to `errorMessage` in machine context.
+  - `CheckoutButton`: Declaratively enables/disables using `state.can({ type: 'SUBMIT' })` and displays a Cancel button while submitting.
+  - `CartItemsList`: Subscribes only to cart items from the Zustand store.
+- **PaymentPanel Component**: Added as a sibling panel in `App.tsx` sharing the checkout actor, showing live payment status, order confirmation, and Submit/Cancel actions.
 
 ---
 
