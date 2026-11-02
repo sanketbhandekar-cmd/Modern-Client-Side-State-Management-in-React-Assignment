@@ -6,16 +6,19 @@ This project demonstrates and compares three client-side state management paradi
 
 ---
 
-## Deliverable 2: Zustand Store
+## Deliverable 4: XState v5 Checkout Machine & Zustand Sync
 
-- **Cart Store (`useCartStore`)**: Created a Zustand store in `src/cartStore.ts` managing `items`, `status` (`'idle' | 'submitting' | 'success' | 'error'`), and actions (`addItem`, `removeItem`, `checkout`, `clear`).
-- **Derived Total**: Computed total price as a derived selector (`s.items.reduce(...)`) so derived state is not duplicated in the store.
-- **Async Checkout Action**: Added an asynchronous `checkout()` action that reads cart items with `get()`, sends them to `POST /api/orders`, and updates status on completion or failure.
-- **Selective Subscriptions**:
-  - `CartBadge`: Subscribes only to total item count.
-  - `ProductCard`: Subscribes strictly to `addItem` action and is wrapped in `React.memo` so it never re-renders when cart items change.
-- **Multiple Values with `useShallow`**: Used `useShallow` in `CartDrawer` and `CartItemsList` when reading multiple values from the store to prevent extra renders.
-- **Catalog Fetch**: Updated `Catalog` to fetch products from `GET /api/products` on mount with loading and error states.
+- **Checkout State Machine (`checkoutMachine.ts`)**: Built a finite state machine using XState v5 with qualitative states (`review`, `submitting`, `success`), guards (`hasItems`), and context (`items`, `errorMessage`, `orderResult`).
+- **Async Payment Actor & Cancellation**: Used `fromPromise` to send orders to `POST /api/orders`. Passed the native `AbortSignal` to `fetch` so clicking "Cancel" mid-flight aborts the HTTP request in the Network tab and returns to `review`.
+- **Shared Checkout Context (`CheckoutContext.tsx`)**: Created an actor context with `createActorContext` so sibling components share a single running checkout actor.
+- **Headless Synchronization Bridges**:
+  - `CartSynchronizer`: Syncs cart items from Zustand to the running machine via `SYNC_ITEMS` events.
+  - `OrderCompletionBridge`: Listens for the emitted `orderSuccess` event from the machine and clears the Zustand store.
+- **Decomposed CartDrawer Components**:
+  - `CartErrorBanner`: Subscribes specifically to `errorMessage` in machine context.
+  - `CheckoutButton`: Declaratively enables/disables using `state.can({ type: 'SUBMIT' })` and displays a Cancel button while submitting.
+  - `CartItemsList`: Subscribes only to cart items from the Zustand store.
+- **PaymentPanel Component**: Added as a sibling panel in `App.tsx` sharing the checkout actor, showing live payment status, order confirmation, and Submit/Cancel actions.
 
 ---
 
